@@ -12,63 +12,31 @@
 <body>
     <div class="app-container">
         <main class="board-container">
-            <div class="board" id="board">
-                <!-- Fila 0 (IA - Fila base superior) -->
-                <div class="cell" data-row="0" data-col="0"><div class="piece piece-b">5</div></div>
-                <div class="cell" data-row="0" data-col="1"><div class="piece piece-b">4</div></div>
-                <div class="cell" data-row="0" data-col="2"><div class="piece piece-b">3</div></div>
-                <div class="cell" data-row="0" data-col="3"><div class="piece piece-b piece-flag">F</div></div>
-                <div class="cell" data-row="0" data-col="4"><div class="piece piece-b">2</div></div>
-                <div class="cell" data-row="0" data-col="5"><div class="piece piece-b">1</div></div>
-                <div class="cell" data-row="0" data-col="6"></div>
-                <!-- Fila 1 -->
-                <div class="cell" data-row="1" data-col="0"></div>
-                <div class="cell" data-row="1" data-col="1"></div>
-                <div class="cell" data-row="1" data-col="2"></div>
-                <div class="cell" data-row="1" data-col="3"></div>
-                <div class="cell" data-row="1" data-col="4"></div>
-                <div class="cell" data-row="1" data-col="5"></div>
-                <div class="cell" data-row="1" data-col="6"></div>
-                <!-- Fila 2 -->
-                <div class="cell" data-row="2" data-col="0"></div>
-                <div class="cell" data-row="2" data-col="1"></div>
-                <div class="cell" data-row="2" data-col="2"></div>
-                <div class="cell" data-row="2" data-col="3"></div>
-                <div class="cell" data-row="2" data-col="4"></div>
-                <div class="cell" data-row="2" data-col="5"></div>
-                <div class="cell" data-row="2" data-col="6"></div>
-                <!-- Fila 3 -->
-                <div class="cell" data-row="3" data-col="0"></div>
-                <div class="cell" data-row="3" data-col="1"></div>
-                <div class="cell" data-row="3" data-col="2"></div>
-                <div class="cell" data-row="3" data-col="3"></div>
-                <div class="cell" data-row="3" data-col="4"></div>
-                <div class="cell" data-row="3" data-col="5"></div>
-                <div class="cell" data-row="3" data-col="6"></div>
-                <!-- Fila 4 -->
-                <div class="cell" data-row="4" data-col="0"></div>
-                <div class="cell" data-row="4" data-col="1"></div>
-                <div class="cell" data-row="4" data-col="2"></div>
-                <div class="cell" data-row="4" data-col="3"></div>
-                <div class="cell" data-row="4" data-col="4"></div>
-                <div class="cell" data-row="4" data-col="5"></div>
-                <div class="cell" data-row="4" data-col="6"></div>
-                <!-- Fila 5 -->
-                <div class="cell" data-row="5" data-col="0"></div>
-                <div class="cell" data-row="5" data-col="1"></div>
-                <div class="cell" data-row="5" data-col="2"></div>
-                <div class="cell" data-row="5" data-col="3"></div>
-                <div class="cell" data-row="5" data-col="4"></div>
-                <div class="cell" data-row="5" data-col="5"></div>
-                <div class="cell" data-row="5" data-col="6"></div>
-                <!-- Fila 6 (Humano - Fila base inferior) -->
-                <div class="cell" data-row="6" data-col="0"><div class="piece piece-a">1</div></div>
-                <div class="cell" data-row="6" data-col="1"><div class="piece piece-a">2</div></div>
-                <div class="cell" data-row="6" data-col="2"><div class="piece piece-a">3</div></div>
-                <div class="cell" data-row="6" data-col="3"><div class="piece piece-a piece-flag">F</div></div>
-                <div class="cell" data-row="6" data-col="4"><div class="piece piece-a">4</div></div>
-                <div class="cell" data-row="6" data-col="5"><div class="piece piece-a">5</div></div>
-                <div class="cell" data-row="6" data-col="6"></div>
+            <div class="board-outer">
+                <!-- Letras superiores -->
+                <div class="label-row top">
+                    <div>A</div><div>B</div><div>C</div><div>D</div><div>E</div><div>F</div><div>G</div>
+                </div>
+                
+                <!-- Números izquierdos -->
+                <div class="label-col left">
+                    <div>7</div><div>6</div><div>5</div><div>4</div><div>3</div><div>2</div><div>1</div>
+                </div>
+                
+                <!-- Tablero de celdas -->
+                <div class="board" id="board">
+                    <!-- Grid dynamically loaded by JS -->
+                </div>
+                
+                <!-- Números derechos -->
+                <div class="label-col right">
+                    <div>7</div><div>6</div><div>5</div><div>4</div><div>3</div><div>2</div><div>1</div>
+                </div>
+                
+                <!-- Letras inferiores -->
+                <div class="label-row bottom">
+                    <div>A</div><div>B</div><div>C</div><div>D</div><div>E</div><div>F</div><div>G</div>
+                </div>
             </div>
         </main>
         
@@ -76,6 +44,28 @@
             <div class="game-logo">
                 <h1>FlagStrike <span>7x7</span></h1>
                 <p class="subtitle">Estrategia Táctica y Minimax IA</p>
+            </div>
+
+            <div class="card mode-card">
+                <h2>Modo de Juego</h2>
+                <div class="mode-selector">
+                    <button class="btn-mode active" id="btn-mode-ai" data-mode="ai">
+                        <span class="mode-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px; display: block;">
+                                <path d="M19 8h-1.18c-.46-1.62-1.52-2.9-2.9-3.57L16 2.5 14.5 1l-1.8 1.8C12.47 2.72 12.24 2.7 12 2.7s-.47.02-.7.1L9.5 1 8 2.5l1.08 1.93C7.7 5.1 6.64 6.38 6.18 8H5c-1.1 0-2 .9-2 2v3c0 1.1.9 2 2 2h1.18c.46 1.62 1.52 2.9 2.9 3.57L8 20.5 9.5 22l1.8-1.8c.23.08.46.1.7.1s.47-.02.7-.1L14.5 22l1.5-1.5-1.08-1.93c1.38-.67 2.44-1.95 2.9-3.57H19c1.1 0 2-.9 2-2v-3c0-1.1-.9-2-2-2zm-2 5c0 2.76-2.24 5-5 5s-5-2.24-5-5v-3c0-2.76 2.24-5 5-5s5 2.24 5 5v3zm-8-2c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
+                            </svg>
+                        </span>
+                        Contra la IA
+                    </button>
+                    <button class="btn-mode" id="btn-mode-human" data-mode="human">
+                        <span class="mode-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px; display: block;">
+                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                            </svg>
+                        </span>
+                        2 Jugadores
+                    </button>
+                </div>
             </div>
 
             <div class="card status-card" id="status-card">
@@ -96,7 +86,7 @@
                 <h2>Estado de Equipos</h2>
                 <div class="team-status team-a">
                     <div class="team-header">
-                        <span class="team-badge">Humano</span>
+                        <span class="team-badge" id="team-a-badge">Humano</span>
                         <span class="team-title">Equipo A (Azul)</span>
                     </div>
                     <div class="team-stats">
@@ -113,7 +103,7 @@
 
                 <div class="team-status team-b">
                     <div class="team-header">
-                        <span class="team-badge">IA Minimax</span>
+                        <span class="team-badge" id="team-b-badge">IA Minimax</span>
                         <span class="team-title">Equipo B (Rojo)</span>
                     </div>
                     <div class="team-stats">

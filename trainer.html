@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Dataset (Texel Tuning)</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .trainer-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        #btn-generate {
+            background: var(--color-player-a);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 1rem 0;
+            transition: all 0.2s;
+        }
+        #btn-generate:hover {
+            box-shadow: 0 0 15px var(--color-player-a-glow);
+        }
+        #btn-generate:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        #progress-container {
+            margin-top: 1rem;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            height: 20px;
+            display: none;
+        }
+        #progress-bar, #opt-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-player-a), hsl(180, 100%, 50%));
+            width: 0%;
+            transition: width 0.1s;
+        }
+        #opt-progress-bar {
+            background: linear-gradient(90deg, #ff0055, #ffaa00);
+        }
+        #status-text, #opt-status-text {
+            margin-top: 1rem;
+            color: var(--text-muted);
+        }
+        #btn-optimize {
+            background: #ff0055;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 1rem 0;
+            transition: all 0.2s;
+            display: none;
+        }
+        #btn-optimize:hover {
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+        }
+        #btn-optimize:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        #weights-output {
+            width: 100%;
+            height: 200px;
+            background: #111;
+            color: #0f0;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            margin-top: 1rem;
+            display: none;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="trainer-container">
+        <h1>Generador de Dataset para Texel's Tuning</h1>
+        <p>Genera miles de partidas de auto-juego para recopilar datos de posiciones y resultados, exclusivamente en JavaScript Vanilla.</p>
+        <p style="color: var(--color-player-a); font-weight: bold; margin-bottom: 1.5rem;">
+            Estimación de tiempo: 1 a 3 segundos.<br>
+            <span style="font-size: 0.9em; color: var(--text-muted); font-weight: normal;">El motor evalúa a Depth 1 (sin recursión profunda). 5000 partidas (aprox. 180 millones de operaciones) se calculan casi instantáneamente.</span>
+        </p>
+        
+        <button id="btn-generate">Generar 5000 Partidas</button>
+        
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="status-text">Esperando para iniciar...</div>
+
+        <hr style="border-color: #333; margin: 2rem 0;">
+
+        <h2>Optimización Automática (Texel's Tuning)</h2>
+        <p>Una vez generado el dataset, inicia el descenso de gradiente para encontrar los pesos perfectos.</p>
+        <button id="btn-optimize" disabled>Optimizar Pesos (Gradiente SPSA)</button>
+        
+        <div id="opt-progress-container" style="display: none; width: 100%; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; height: 20px;">
+            <div id="opt-progress-bar"></div>
+        </div>
+        <div id="opt-status-text">Genera el dataset primero...</div>
+
+        <textarea id="weights-output" readonly placeholder="Los nuevos valores optimizados aparecerán aquí..."></textarea>
+    </div>
+
+    <!-- Reutilizamos game.js para la lógica base de movimiento -->
+    <script src="game.js"></script>
+    <script src="trainer.js"></script>
+</body>
+</html>

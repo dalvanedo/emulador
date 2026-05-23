@@ -82,6 +82,29 @@
                 </div>
             </div>
 
+            <div class="card review-card" id="review-card" style="display: none;">
+                <h2>Revisión de Partida</h2>
+                
+                <div class="victory-bar-container">
+                    <div class="victory-bar-header">
+                        <span>Victoria (Equipo Azul)</span>
+                        <span id="victory-percentage-text">50.0%</span>
+                    </div>
+                    <div class="victory-bar-track">
+                        <div class="victory-bar-fill" id="victory-bar-fill" style="width: 50%;"></div>
+                    </div>
+                </div>
+
+                <div class="review-controls">
+                    <button class="btn-review" id="btn-review-start" title="Inicio">⏮</button>
+                    <button class="btn-review" id="btn-review-prev" title="Anterior">◀</button>
+                    <span class="review-status" id="review-status">0 / 0</span>
+                    <button class="btn-review" id="btn-review-next" title="Siguiente">▶</button>
+                    <button class="btn-review" id="btn-review-end" title="Fin">⏭</button>
+                </div>
+                <div class="review-details" id="review-details"></div>
+            </div>
+
             <div class="card teams-card">
                 <h2>Estado de Equipos</h2>
                 <div class="team-status team-a">

@@ -673,3 +673,183 @@ body.ia-thinking .board-outer {
         box-shadow: 0 0 15px var(--color-player-b-glow);
     }
 }
+
+/* --- DECORACIÓN Y PANEL DE REVISIÓN DE PARTIDA --- */
+.review-card {
+    border-left: 3px solid hsl(140, 80%, 45%) !important; /* Color verde elegante de revisión */
+    background: linear-gradient(135deg, var(--bg-card) 0%, hsl(225, 18%, 11%) 100%) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transition: var(--transition-smooth);
+    animation: slideInReview 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --- BARRA DE PROGRESO DE VICTORIA (EQUIPO AZUL) --- */
+.victory-bar-container {
+    margin: 12px 0 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.victory-bar-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+#victory-percentage-text {
+    font-weight: 700;
+    color: var(--color-player-a);
+    transition: var(--transition-fast);
+}
+
+.victory-bar-track {
+    width: 100%;
+    height: 8px;
+    background-color: hsla(345, 100%, 55%, 0.15); /* Fondo: rojo traslúcido de la IA */
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.victory-bar-fill {
+    height: 100%;
+    width: 50%;
+    background: linear-gradient(90deg, var(--color-player-a) 0%, hsl(200, 100%, 60%) 100%);
+    border-radius: 4px;
+    transition: width 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 0 8px var(--color-player-a-glow);
+}
+
+@keyframes slideInReview {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.review-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.btn-review {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-review:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: hsl(140, 80%, 55%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-review:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-review:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.02);
+}
+
+.review-status {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 60px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.review-details {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-subtle);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    min-height: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.review-details .move-label {
+    font-weight: 700;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.review-details .move-badge {
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+}
+
+.review-details .move-badge.team-a {
+    background-color: hsla(210, 100%, 55%, 0.15);
+    color: var(--color-player-a);
+    border: 1px solid hsla(210, 100%, 55%, 0.2);
+}
+
+.review-details .move-badge.team-b {
+    background-color: hsla(345, 100%, 55%, 0.15);
+    color: var(--color-player-b);
+    border: 1px solid hsla(345, 100%, 55%, 0.2);
+}
+
+.review-details .move-text {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Estado de tablero bloqueado para clicks en revisión */
+.board-locked {
+    pointer-events: none !important;
+}
+
+.board-locked .cell {
+    cursor: default !important;
+}
+
+.board-locked .cell:hover {
+    background-color: var(--bg-cell) !important;
+    border-color: rgba(255, 255, 255, 0.02) !important;
+    box-shadow: none !important;
+}
+
+.board-locked .piece:hover {
+    transform: none !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important;
+}

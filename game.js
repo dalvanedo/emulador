@@ -1,4 +1,5 @@
 // game.js
+var gameHistory = [];
 
 class GameState {
     constructor() {
@@ -17,6 +18,7 @@ class GameState {
                 this.board[r][c] = null;
             }
         }
+        gameHistory = [];
         this.gameOver = false;
         this.winner = null;
         this.currentTurn = 'A';
@@ -56,6 +58,13 @@ class GameState {
         for (let col = 1; col <= 5; col++) {
             this.board[5][col] = piecesA[idxA++];
         }
+
+        // Guardar la posición inicial (estado 0) en el historial
+        gameHistory.push({
+            board: JSON.parse(JSON.stringify(this.board)),
+            turn: this.currentTurn,
+            move: { fromRow: null, fromCol: null, toRow: null, toCol: null }
+        });
     }
 
     shuffleArray(array) {
@@ -178,10 +187,19 @@ class GameState {
             this.board[fromRow][fromCol] = null;
         }
 
+        const turnPlayer = this.currentTurn;
+
         // Verificar si algún equipo se quedó sin atacantes
         if (!this.gameOver) {
             this.checkAttackerCount();
         }
+
+        // Guardar el estado en el historial de la partida
+        gameHistory.push({
+            board: JSON.parse(JSON.stringify(this.board)),
+            turn: turnPlayer,
+            move: { fromRow, fromCol, toRow, toCol }
+        });
 
         // Cambiar turno si el juego no terminó
         if (!this.gameOver) {

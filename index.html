@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture the Flag 7x7 - Emulador de Estrategia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <main class="board-container">
+            <div class="board" id="board">
+                <!-- Fila 0 (IA - Fila base superior) -->
+                <div class="cell" data-row="0" data-col="0"><div class="piece piece-b">5</div></div>
+                <div class="cell" data-row="0" data-col="1"><div class="piece piece-b">4</div></div>
+                <div class="cell" data-row="0" data-col="2"><div class="piece piece-b">3</div></div>
+                <div class="cell" data-row="0" data-col="3"><div class="piece piece-b piece-flag">F</div></div>
+                <div class="cell" data-row="0" data-col="4"><div class="piece piece-b">2</div></div>
+                <div class="cell" data-row="0" data-col="5"><div class="piece piece-b">1</div></div>
+                <div class="cell" data-row="0" data-col="6"></div>
+                <!-- Fila 1 -->
+                <div class="cell" data-row="1" data-col="0"></div>
+                <div class="cell" data-row="1" data-col="1"></div>
+                <div class="cell" data-row="1" data-col="2"></div>
+                <div class="cell" data-row="1" data-col="3"></div>
+                <div class="cell" data-row="1" data-col="4"></div>
+                <div class="cell" data-row="1" data-col="5"></div>
+                <div class="cell" data-row="1" data-col="6"></div>
+                <!-- Fila 2 -->
+                <div class="cell" data-row="2" data-col="0"></div>
+                <div class="cell" data-row="2" data-col="1"></div>
+                <div class="cell" data-row="2" data-col="2"></div>
+                <div class="cell" data-row="2" data-col="3"></div>
+                <div class="cell" data-row="2" data-col="4"></div>
+                <div class="cell" data-row="2" data-col="5"></div>
+                <div class="cell" data-row="2" data-col="6"></div>
+                <!-- Fila 3 -->
+                <div class="cell" data-row="3" data-col="0"></div>
+                <div class="cell" data-row="3" data-col="1"></div>
+                <div class="cell" data-row="3" data-col="2"></div>
+                <div class="cell" data-row="3" data-col="3"></div>
+                <div class="cell" data-row="3" data-col="4"></div>
+                <div class="cell" data-row="3" data-col="5"></div>
+                <div class="cell" data-row="3" data-col="6"></div>
+                <!-- Fila 4 -->
+                <div class="cell" data-row="4" data-col="0"></div>
+                <div class="cell" data-row="4" data-col="1"></div>
+                <div class="cell" data-row="4" data-col="2"></div>
+                <div class="cell" data-row="4" data-col="3"></div>
+                <div class="cell" data-row="4" data-col="4"></div>
+                <div class="cell" data-row="4" data-col="5"></div>
+                <div class="cell" data-row="4" data-col="6"></div>
+                <!-- Fila 5 -->
+                <div class="cell" data-row="5" data-col="0"></div>
+                <div class="cell" data-row="5" data-col="1"></div>
+                <div class="cell" data-row="5" data-col="2"></div>
+                <div class="cell" data-row="5" data-col="3"></div>
+                <div class="cell" data-row="5" data-col="4"></div>
+                <div class="cell" data-row="5" data-col="5"></div>
+                <div class="cell" data-row="5" data-col="6"></div>
+                <!-- Fila 6 (Humano - Fila base inferior) -->
+                <div class="cell" data-row="6" data-col="0"><div class="piece piece-a">1</div></div>
+                <div class="cell" data-row="6" data-col="1"><div class="piece piece-a">2</div></div>
+                <div class="cell" data-row="6" data-col="2"><div class="piece piece-a">3</div></div>
+                <div class="cell" data-row="6" data-col="3"><div class="piece piece-a piece-flag">F</div></div>
+                <div class="cell" data-row="6" data-col="4"><div class="piece piece-a">4</div></div>
+                <div class="cell" data-row="6" data-col="5"><div class="piece piece-a">5</div></div>
+                <div class="cell" data-row="6" data-col="6"></div>
+            </div>
+        </main>
+        
+        <aside class="sidebar">
+            <div class="game-logo">
+                <h1>FlagStrike <span>7x7</span></h1>
+                <p class="subtitle">Estrategia Táctica y Minimax IA</p>
+            </div>
+
+            <div class="card status-card" id="status-card">
+                <div class="status-header">
+                    <h2>Estado del Turno</h2>
+                    <span class="pulse-indicator active" id="pulse-indicator"></span>
+                </div>
+                <div class="turn-display player-a-turn">
+                    <div class="turn-avatar" id="turn-avatar">A</div>
+                    <div class="turn-info">
+                        <span class="turn-label">TURNO ACTUAL</span>
+                        <span class="turn-value" id="turn-value">Equipo A (Humano)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card teams-card">
+                <h2>Estado de Equipos</h2>
+                <div class="team-status team-a">
+                    <div class="team-header">
+                        <span class="team-badge">Humano</span>
+                        <span class="team-title">Equipo A (Azul)</span>
+                    </div>
+                    <div class="team-stats">
+                        <div class="stat">
+                            <span class="stat-label">Bandera</span>
+                            <span class="stat-val alive" id="team-a-flag">Activa</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Atacantes</span>
+                            <span class="stat-val" id="team-a-attackers">5 / 5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-status team-b">
+                    <div class="team-header">
+                        <span class="team-badge">IA Minimax</span>
+                        <span class="team-title">Equipo B (Rojo)</span>
+                    </div>
+                    <div class="team-stats">
+                        <div class="stat">
+                            <span class="stat-label">Bandera</span>
+                            <span class="stat-val alive" id="team-b-flag">Activa</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Atacantes</span>
+                            <span class="stat-val" id="team-b-attackers">5 / 5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card info-card">
+                <h2>Reglas Rápidas</h2>
+                <ul class="rules-list">
+                    <li>Captura la bandera enemiga <span class="badge">F</span> para ganar.</li>
+                    <li>Las piezas con mayor valor eliminan a las menores (<span class="badge">5</span> &gt; <span class="badge">4</span>).</li>
+                    <li>El atacante <span class="badge">1</span> puede eliminar al <span class="badge">5</span>.</li>
+                    <li>En caso de empate numérico, el atacante gana al defensor.</li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-reset" id="btn-reset">Reiniciar Partida</button>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="game.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>

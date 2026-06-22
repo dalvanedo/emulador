@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
         aiWorker = new Worker('worker.js');
     } catch (e) {
         console.error("No se pudo iniciar el Worker (¿Estás usando file:// en lugar de un servidor local HTTP?):", e);
+        const overlay = document.getElementById('ai-loading-overlay');
+        if (overlay) overlay.classList.add('hidden');
     }
 
     const boardElement = document.getElementById('board');
@@ -179,6 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configurar el listener de respuesta del Web Worker
     if (aiWorker) {
         aiWorker.onmessage = function(e) {
+            if (e.data && e.data.type === 'NN_LOADED') {
+                const overlay = document.getElementById('ai-loading-overlay');
+                if (overlay) overlay.classList.add('hidden');
+                return;
+            }
+
             const bestMove = e.data;
             if (bestMove) {
                 // Retrasar levemente para dar una sensación más orgánica y visual al movimiento

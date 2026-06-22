@@ -3,7 +3,9 @@ importScripts('game.js', 'nn_engine.js');
 let nnEngine = new NNEngine();
 
 // Cargar pesos y guardar la promesa para poder esperarla
-let loadPromise = nnEngine.loadWeights('model_weights.json');
+let loadPromise = nnEngine.loadWeights('model_weights.json').then(() => {
+    self.postMessage({ type: 'NN_LOADED' });
+});
 
 self.onmessage = async function(e) {
     // Esperar activamente a que los pesos terminen de descargarse

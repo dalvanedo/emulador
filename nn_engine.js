@@ -29,8 +29,11 @@ class NNEngine {
                         let parsed = JSON.parse(xhr.responseText);
                         this.weights = {};
                         for (let key in parsed) {
-                            // Aplanamos cualquier matriz 2D/4D en un array plano contiguo 1D en C++
-                            this.weights[key] = new Float32Array(parsed[key].flat(Infinity));
+                            if (Array.isArray(parsed[key])) {
+                                this.weights[key] = new Float32Array(this.flattenArray(parsed[key]));
+                            } else {
+                                this.weights[key] = parsed[key];
+                            }
                         }
                         this.isLoaded = true;
                         resolve();
@@ -45,6 +48,21 @@ class NNEngine {
             xhr.onerror = () => reject(new Error("Network Error"));
             xhr.send();
         });
+    }
+
+    flattenArray(arr) {
+        let result = [];
+        function recurse(a) {
+            if (Array.isArray(a)) {
+                for (let i = 0; i < a.length; i++) {
+                    recurse(a[i]);
+                }
+            } else {
+                result.push(a);
+            }
+        }
+        recurse(arr);
+        return result;
     }
 
     // Funciones matemáticas auxiliares

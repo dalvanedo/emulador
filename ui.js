@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Crear el Web Worker apuntando al archivo independiente
     let aiWorker;
     try {
-        aiWorker = new Worker('worker.js?v=4');
+        aiWorker = new Worker('worker.js?v=5');
     } catch (e) {
         console.error("No se pudo iniciar el Worker (¿Estás usando file:// en lugar de un servidor local HTTP?):", e);
         const overlay = document.getElementById('ai-loading-overlay');

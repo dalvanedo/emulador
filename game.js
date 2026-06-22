@@ -19,6 +19,7 @@ class GameState {
             }
         }
         gameHistory = [];
+        this.stateCounts = {};
         this.gameOver = false;
         this.winner = null;
         this.currentTurn = 'A';
@@ -201,9 +202,24 @@ class GameState {
             move: { fromRow, fromCol, toRow, toCol }
         });
 
+        // Detectar Triple Repetición
+        if (!this.gameOver) {
+            let stateStr = this.getStateString();
+            this.stateCounts[stateStr] = (this.stateCounts[stateStr] || 0) + 1;
+            if (this.stateCounts[stateStr] >= 3) {
+                this.endGame('Draw_Repetition');
+                battleResult = 'draw_repetition';
+                message = '¡Empate por Triple Repetición!';
+            }
+        }
+
         // Cambiar turno si el juego no terminó
         if (!this.gameOver) {
             this.currentTurn = this.currentTurn === 'A' ? 'B' : 'A';
+            
+            if (!this.hasAnyValidMove(this.currentTurn)) {
+                this.endGame(this.currentTurn === 'A' ? 'B' : 'A');
+            }
         }
 
         return {
@@ -214,6 +230,19 @@ class GameState {
             gameOver: this.gameOver,
             winner: this.winner
         };
+    }
+
+    getStateString() {
+        let str = this.currentTurn + '|';
+        for (let r=0; r<7; r++) {
+            for (let c=0; c<7; c++) {
+                let p = this.board[r][c];
+                if (p) {
+                    str += `${r}${c}${p.team}${p.type}${p.value}|`;
+                }
+            }
+        }
+        return str;
     }
 
     checkAttackerCount() {
@@ -239,6 +268,29 @@ class GameState {
         }
     }
 
+    hasAnyValidMove(team) {
+        const originalTurn = this.currentTurn;
+        this.currentTurn = team;
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+                const piece = this.board[r][c];
+                if (piece && piece.team === team && piece.type !== 'flag') {
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+                            if (this.isValidMove(r, c, r + dr, c + dc)) {
+                                this.currentTurn = originalTurn;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        this.currentTurn = originalTurn;
+        return false;
+    }
+
     endGame(winnerTeam) {
         this.gameOver = true;
         this.winner = winnerTeam;
@@ -257,5 +309,16 @@ class GameState {
             }
         }
         return { flag, attackers };
+    }
+
+    clone() {
+        const newGame = new GameState();
+        // Evitamos llamar a initBoard para no sobreescribir
+        newGame.board = JSON.parse(JSON.stringify(this.board));
+        newGame.currentTurn = this.currentTurn;
+        newGame.gameOver = this.gameOver;
+        newGame.winner = this.winner;
+        newGame.stateCounts = { ...this.stateCounts };
+        return newGame;
     }
 }

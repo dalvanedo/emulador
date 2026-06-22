@@ -1,0 +1,6 @@
+pufferlib
+gymnasium
+torch
+numpy
+pettingzoo
+tensorboard

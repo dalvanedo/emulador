@@ -261,7 +261,7 @@ body {
     border-radius: 24px;
     padding: 18px 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: hidden; /* Elimina scrollbars, encaja exacto en pantalla */
+    overflow-y: auto; /* Permitir scroll para no ocultar el botón de reinicio */
 }
 
 .game-logo {

@@ -26,7 +26,12 @@ class NNEngine {
             xhr.onload = () => {
                 if (xhr.status === 200 || xhr.status === 0) {
                     try {
-                        this.weights = JSON.parse(xhr.responseText);
+                        let parsed = JSON.parse(xhr.responseText);
+                        this.weights = {};
+                        for (let key in parsed) {
+                            // Aplanamos cualquier matriz 2D/4D en un array plano contiguo 1D en C++
+                            this.weights[key] = new Float32Array(parsed[key].flat(Infinity));
+                        }
                         this.isLoaded = true;
                         resolve();
                     } catch(e) {
@@ -69,7 +74,8 @@ class NNEngine {
                                 let in_x = x + kx - padX;
                                 if (in_y >= 0 && in_y < H && in_x >= 0 && in_x < W) {
                                     let in_val = inTensor[(ic * H * W) + (in_y * W) + in_x];
-                                    let w_val = weight[oc][ic][ky][kx];
+                                    let w_idx = (((oc * C_in + ic) * kH) + ky) * kW + kx;
+                                    let w_val = weight[w_idx];
                                     sum += in_val * w_val;
                                 }
                             }
@@ -91,7 +97,8 @@ class NNEngine {
         for (let o = 0; o < out_features; o++) {
             let sum = bias[o];
             for (let i = 0; i < in_features; i++) {
-                sum += inTensor[i] * weight[o][i];
+                let w_idx = o * in_features + i;
+                sum += inTensor[i] * weight[w_idx];
             }
             outTensor[o] = applyRelu ? this.relu(sum) : sum;
         }

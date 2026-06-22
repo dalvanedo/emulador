@@ -2,15 +2,15 @@ importScripts('game.js', 'nn_engine.js');
 
 let nnEngine = new NNEngine();
 
-self.onmessage = function(e) {
-    if (e.data.type === 'LOAD_NN') {
-        nnEngine.weights = e.data.weights;
-        nnEngine.isLoaded = true;
-        return;
-    }
+// Cargar pesos y guardar la promesa para poder esperarla
+let loadPromise = nnEngine.loadWeights('model_weights.json');
 
+self.onmessage = async function(e) {
+    // Esperar activamente a que los pesos terminen de descargarse
+    await loadPromise;
+    
     if (!nnEngine.isLoaded) {
-        console.error("Worker: NNEngine not loaded yet.");
+        console.error("Worker: Error crítico, NNEngine no cargó los pesos correctamente.");
         return;
     }
 

@@ -8,7 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let isReviewMode = false;
     
     // Crear el Web Worker apuntando al archivo independiente
-    const aiWorker = new Worker('worker.js');(blob));
+    let aiWorker;
+    try {
+        aiWorker = new Worker('worker.js');
+    } catch (e) {
+        console.error("No se pudo iniciar el Worker (¿Estás usando file:// en lugar de un servidor local HTTP?):", e);
+    }
 
     const boardElement = document.getElementById('board');
     const btnReset = document.getElementById('btn-reset');
@@ -156,32 +161,40 @@ document.addEventListener('DOMContentLoaded', () => {
         turnValue.textContent = 'Equipo B (IA) pensando...';
         statusCard.classList.add('thinking-pulse');
         
-        // Enviar el tablero actual al Web Worker para calcular el movimiento
-        aiWorker.postMessage({
-            board: game.board,
-            gameOver: game.gameOver,
-            winner: game.winner,
-            currentTurn: game.currentTurn
-        });
+        if (aiWorker) {
+            aiWorker.postMessage({
+                board: game.board,
+                gameOver: game.gameOver,
+                winner: game.winner,
+                currentTurn: game.currentTurn
+            });
+        } else {
+            console.error("Worker no disponible. Por favor arranca el juego con un servidor local HTTP.");
+            document.body.classList.remove('ia-thinking');
+            statusCard.classList.remove('thinking-pulse');
+            turnValue.textContent = 'Error: Worker no disponible';
+        }
     }
 
     // Configurar el listener de respuesta del Web Worker
-    aiWorker.onmessage = function(e) {
-        const bestMove = e.data;
-        if (bestMove) {
-            // Retrasar levemente para dar una sensación más orgánica y visual al movimiento
-            setTimeout(() => {
-                const result = game.movePiece(bestMove.fromR, bestMove.fromC, bestMove.toR, bestMove.toC);
-                
-                // Desbloquear la interfaz
-                document.body.classList.remove('ia-thinking');
-                statusCard.classList.remove('thinking-pulse');
-                
-                renderBoard();
-                updateSidebar(result);
-            }, 600); // 600ms de retraso simulado para que se aprecie la animación de "pensando"
-        }
-    };
+    if (aiWorker) {
+        aiWorker.onmessage = function(e) {
+            const bestMove = e.data;
+            if (bestMove) {
+                // Retrasar levemente para dar una sensación más orgánica y visual al movimiento
+                setTimeout(() => {
+                    const result = game.movePiece(bestMove.fromR, bestMove.fromC, bestMove.toR, bestMove.toC);
+                    
+                    // Desbloquear la interfaz
+                    document.body.classList.remove('ia-thinking');
+                    statusCard.classList.remove('thinking-pulse');
+                    
+                    renderBoard();
+                    updateSidebar(result);
+                }, 600); // 600ms de retraso simulado para que se aprecie la animación de "pensando"
+            }
+        };
+    }
 
     function updateSidebar(moveResult = null) {
         const turn = game.currentTurn;

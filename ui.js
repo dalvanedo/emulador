@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Crear el Web Worker apuntando al archivo independiente
     let aiWorker;
     try {
-        aiWorker = new Worker('worker.js');
+        aiWorker = new Worker('worker.js?v=4');
     } catch (e) {
         console.error("No se pudo iniciar el Worker (¿Estás usando file:// en lugar de un servidor local HTTP?):", e);
         const overlay = document.getElementById('ai-loading-overlay');
@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function triggerAIMove() {
         // Bloquear visualmente la interfaz añadiendo la clase ia-thinking
         document.body.classList.add('ia-thinking');
+        window.aiIsThinking = true;
         
         // Actualizar visualmente la barra lateral para mostrar que la IA está pensando
         turnValue.textContent = 'Equipo B (IA) pensando...';
@@ -174,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Worker no disponible. Por favor arranca el juego con un servidor local HTTP.");
             document.body.classList.remove('ia-thinking');
             statusCard.classList.remove('thinking-pulse');
+            window.aiIsThinking = false;
             turnValue.textContent = 'Error: Worker no disponible';
         }
     }
@@ -201,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Worker crashed:", e.data.message, e.data.stack);
                 document.body.classList.remove('ia-thinking');
                 statusCard.classList.remove('thinking-pulse');
+                window.aiIsThinking = false;
                 turnValue.textContent = 'Error interno en la IA';
                 return;
             }
@@ -214,10 +217,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Desbloquear la interfaz
                     document.body.classList.remove('ia-thinking');
                     statusCard.classList.remove('thinking-pulse');
+                    window.aiIsThinking = false;
                     
                     renderBoard();
                     updateSidebar(result);
                 }, 600); // 600ms de retraso simulado para que se aprecie la animación de "pensando"
+            } else {
+                document.body.classList.remove('ia-thinking');
+                statusCard.classList.remove('thinking-pulse');
+                window.aiIsThinking = false;
+                turnValue.textContent = 'Fallo crítico IA (null)';
             }
         };
     }

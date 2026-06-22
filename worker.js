@@ -1,4 +1,4 @@
-importScripts('game.js', 'nn_engine.js');
+importScripts('game.js?v=4', 'nn_engine.js?v=4');
 
 let nnEngine = new NNEngine();
 

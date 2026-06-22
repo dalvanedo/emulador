@@ -222,7 +222,7 @@ class NNEngine {
                         for (let dc=-1; dc<=1; dc++) {
                             if (dr===0 && dc===0) continue;
                             if (game.isValidMove(r, c, r+dr, c+dc)) {
-                                moves.push({fr: r, fc: c, tr: r+dr, tc: c+dc});
+                                moves.push({fromR: r, fromC: c, toR: r+dr, toC: c+dc});
                             }
                         }
                     }
@@ -233,10 +233,10 @@ class NNEngine {
     }
 
     moveToActionIdx(m) {
-        let dr = m.tr - m.fr;
-        let dc = m.tc - m.fc;
+        let dr = m.toR - m.fromR;
+        let dc = m.toC - m.fromC;
         let dirIdx = (dr + 1) * 3 + (dc + 1);
         if (dirIdx >= 4) dirIdx -= 1;
-        return (m.fr * 7 + m.fc) * 8 + dirIdx;
+        return (m.fromR * 7 + m.fromC) * 8 + dirIdx;
     }
 }

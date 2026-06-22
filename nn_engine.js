@@ -159,112 +159,32 @@ class NNEngine {
     }
 
     getBestMove(game) {
-        return this.getBestMoveMinimax(game, 2); // Profundidad 2 plies por defecto para que sea rápido en JS
-    }
-
-    getBestMoveMinimax(originalGame, depth) {
         if (!this.isLoaded) return null;
 
-        let bestMove = null;
-        let bestValue = -Infinity;
-        let alpha = -Infinity;
-        let beta = Infinity;
-
-        const maximizingPlayer = originalGame.currentTurn;
-
-        let legalMoves = this.getAllLegalMoves(originalGame);
+        let legalMoves = this.getAllLegalMoves(game);
         if (legalMoves.length === 0) return null;
 
-        // Softmax/Argmax sobre los legal moves para ordenar y mejorar Poda Alfa-Beta
-        let result = this.forward(originalGame.board, originalGame.currentTurn);
-        if (result) {
-            for (let m of legalMoves) {
-                let actionIdx = this.moveToActionIdx(m);
-                m.logit = result.logits[actionIdx];
-            }
-            legalMoves.sort((a, b) => b.logit - a.logit); // Mejores logits primero
-        }
+        // Evaluar la red neuronal EXACTAMENTE UNA VEZ (Inferencia pura de la Política/Actor)
+        let result = this.forward(game.board, game.currentTurn);
+        if (!result) return legalMoves[0];
 
+        let bestMove = null;
+        let bestLogit = -Infinity;
+
+        // PPO (Proximal Policy Optimization) ya entrenó al 'Actor' para que devuelva
+        // los mejores logits para las acciones ganadoras. Simplemente hacemos un ArgMax.
         for (let m of legalMoves) {
-            let cloned = originalGame.clone();
-            cloned.movePiece(m.fr, m.fc, m.tr, m.tc);
+            let actionIdx = this.moveToActionIdx(m);
+            let logit = result.logits[actionIdx];
+            m.logit = logit;
             
-            let val = this.minimax(cloned, depth - 1, alpha, beta, maximizingPlayer);
-            
-            if (val > bestValue) {
-                bestValue = val;
+            if (logit > bestLogit) {
+                bestLogit = logit;
                 bestMove = m;
             }
-            alpha = Math.max(alpha, bestValue);
-            if (alpha >= beta) break;
         }
 
-        return bestMove || legalMoves[0]; // Fallback por si acaso
-    }
-
-    minimax(game, depth, alpha, beta, maximizingPlayer) {
-        if (game.gameOver) {
-            if (game.winner === 'Draw_Repetition' || game.winner === 'Draw') return 0;
-            return game.winner === maximizingPlayer ? 1000 + depth : -1000 - depth;
-        }
-
-        if (depth === 0) {
-            // Heurística de Red Neuronal (Critic)
-            let result = this.forward(game.board, game.currentTurn);
-            let nnValue = result ? result.value : 0;
-            
-            // El NN value está siempre desde la perspectiva de game.currentTurn
-            let evalScore = game.currentTurn === maximizingPlayer ? nnValue : -nnValue;
-            
-            // Material heurístico de apoyo para romper empates y castigar colgarse piezas
-            let materialScore = this.getMaterialScore(game.board, maximizingPlayer);
-            
-            return (evalScore * 10) + materialScore; 
-        }
-
-        let legalMoves = this.getAllLegalMoves(game);
-        if (legalMoves.length === 0) {
-            return game.currentTurn === maximizingPlayer ? -1000 - depth : 1000 + depth;
-        }
-
-        if (game.currentTurn === maximizingPlayer) {
-            let maxEval = -Infinity;
-            for (let m of legalMoves) {
-                let cloned = game.clone();
-                cloned.movePiece(m.fr, m.fc, m.tr, m.tc);
-                let ev = this.minimax(cloned, depth - 1, alpha, beta, maximizingPlayer);
-                maxEval = Math.max(maxEval, ev);
-                alpha = Math.max(alpha, ev);
-                if (beta <= alpha) break;
-            }
-            return maxEval;
-        } else {
-            let minEval = Infinity;
-            for (let m of legalMoves) {
-                let cloned = game.clone();
-                cloned.movePiece(m.fr, m.fc, m.tr, m.tc);
-                let ev = this.minimax(cloned, depth - 1, alpha, beta, maximizingPlayer);
-                minEval = Math.min(minEval, ev);
-                beta = Math.min(beta, ev);
-                if (beta <= alpha) break;
-            }
-            return minEval;
-        }
-    }
-
-    getMaterialScore(board, maximizingPlayer) {
-        let score = 0;
-        for (let r = 0; r < 7; r++) {
-            for (let c = 0; c < 7; c++) {
-                let p = board[r][c];
-                if (p && p.type === 'attacker') {
-                    let val = p.value; // 1 to 5
-                    if (p.team === maximizingPlayer) score += val;
-                    else score -= val;
-                }
-            }
-        }
-        return score * 0.1; // Pequeño peso frente a la NN (-1.5 a 1.5)
+        return bestMove || legalMoves[0];
     }
 
     getAllLegalMoves(game) {

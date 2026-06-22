@@ -197,6 +197,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            if (e.data && e.data.type === 'ERROR') {
+                console.error("Worker crashed:", e.data.message, e.data.stack);
+                document.body.classList.remove('ia-thinking');
+                statusCard.classList.remove('thinking-pulse');
+                turnValue.textContent = 'Error interno en la IA';
+                return;
+            }
+
             const bestMove = e.data;
             if (bestMove) {
                 // Retrasar levemente para dar una sensación más orgánica y visual al movimiento

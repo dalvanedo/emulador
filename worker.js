@@ -18,12 +18,16 @@ self.onmessage = async function(e) {
         return;
     }
 
-    let game = new GameState();
-    game.board = e.data.board;
-    game.currentTurn = e.data.currentTurn || 'B';
-    game.gameOver = e.data.gameOver || false;
-    game.winner = e.data.winner || null;
+    try {
+        let game = new GameState();
+        game.board = e.data.board;
+        game.currentTurn = e.data.currentTurn || 'B';
+        game.gameOver = e.data.gameOver || false;
+        game.winner = e.data.winner || null;
 
-    const bestMove = nnEngine.getBestMove(game);
-    self.postMessage(bestMove);
+        const bestMove = nnEngine.getBestMove(game);
+        self.postMessage(bestMove);
+    } catch (error) {
+        self.postMessage({ type: 'ERROR', message: error.message, stack: error.stack });
+    }
 };

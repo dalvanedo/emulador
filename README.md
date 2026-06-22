@@ -1,4 +1,4 @@
-# Antigravity: FlagStrike 7x7 (Reinforcement Learning)
+# FlagStrike 7x7 (Reinforcement Learning)
 
 FlagStrike 7x7 es un juego de mesa estratégico de información perfecta. Esta versión implementa una Inteligencia Artificial entrenada desde cero jugando contra sí misma utilizando Aprendizaje por Refuerzo (PPO y Self-Play).
 

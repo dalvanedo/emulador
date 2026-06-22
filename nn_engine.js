@@ -7,16 +7,39 @@ class NNEngine {
         this.isLoaded = false;
     }
 
-    async loadWeights(url) {
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            this.weights = data;
-            this.isLoaded = true;
-            console.log("Model weights loaded successfully.");
-        } catch (e) {
-            console.error("Error loading model weights:", e);
-        }
+    loadWeights(url, onProgress) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            // Si el servidor sirve json directo
+            xhr.responseType = 'text'; 
+            
+            xhr.onprogress = (event) => {
+                let loaded = event.loaded;
+                // Si el servidor comprime con gzip, event.total puede ser 0. Usamos el tamaño real del archivo sin comprimir como fallback (11456118 bytes)
+                let total = event.lengthComputable && event.total > 0 ? event.total : 11456118; 
+                let percent = (loaded / total) * 100;
+                if (percent > 100) percent = 100; // Por si hay compresión y descargamos menos
+                if (onProgress) onProgress(percent);
+            };
+
+            xhr.onload = () => {
+                if (xhr.status === 200 || xhr.status === 0) {
+                    try {
+                        this.weights = JSON.parse(xhr.responseText);
+                        this.isLoaded = true;
+                        resolve();
+                    } catch(e) {
+                        reject(new Error("Error parseando JSON: " + e));
+                    }
+                } else {
+                    reject(new Error("HTTP Error " + xhr.status));
+                }
+            };
+            
+            xhr.onerror = () => reject(new Error("Network Error"));
+            xhr.send();
+        });
     }
 
     // Funciones matemáticas auxiliares

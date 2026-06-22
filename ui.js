@@ -181,6 +181,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configurar el listener de respuesta del Web Worker
     if (aiWorker) {
         aiWorker.onmessage = function(e) {
+            if (e.data && e.data.type === 'NN_PROGRESS') {
+                const bar = document.getElementById('loading-progress-bar');
+                const text = document.getElementById('loading-percent-text');
+                if (bar && text) {
+                    bar.style.width = `${e.data.percent}%`;
+                    text.textContent = `${Math.round(e.data.percent)}%`;
+                }
+                return;
+            }
+
             if (e.data && e.data.type === 'NN_LOADED') {
                 const overlay = document.getElementById('ai-loading-overlay');
                 if (overlay) overlay.classList.add('hidden');
